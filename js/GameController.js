@@ -19,19 +19,19 @@
 function preload() {
     console.log("Loading Assets...");
     // Load game assets
-    game.load.spritesheet('enemy', '../GameCore/Assets/Enemies/baddie.png', 32, 32);
-    game.load.image('SplashScreen', '../GameCore/Assets/Screens/SplashScreen.png');
-    game.load.image('star', '../GameCore/Assets/Collectibles/star.png');
-    game.load.image('HUD', '../GameCore/Assets/HUD/HUD.png');
-    game.load.image('LeftButton', '../GameCore/Assets/HUD/LeftButton.png');
-    game.load.image('RightButton', '../GameCore/Assets/HUD/RightButton.png');
-    game.load.image('AttackButton', '../GameCore/Assets/HUD/AttackButton.png');
-    game.load.image('JumpButton', '../GameCore/Assets/HUD/JumpButton.png');
-    game.load.image('HealthBar', '../GameCore/Assets/HUD/HealthBarLine.png');
-    game.load.atlasJSONHash('player', '../GameCore/Assets/Player/player.png', '../GameCore/Assets/Player/player.json');
-    game.load.atlasJSONHash('enemies', '../GameCore/Assets/Enemies/enemies.png', '../GameCore/Assets/Enemies/enemies.json');
-    game.load.tilemap('map', '../GameCore/Assets/Maps/Map1.json', null, Phaser.Tilemap.TILED_JSON);
-    game.load.image('jungle tileset', '../GameCore/Assets/Maps/jungle tileset.png');
+    game.load.spritesheet('enemy', 'Assets/Enemies/baddie.png', 32, 32);
+    game.load.image('SplashScreen', 'Assets/Screens/SplashScreen.png');
+    game.load.image('star', 'Assets/Collectibles/star.png');
+    game.load.image('HUD', 'Assets/HUD/HUD.png');
+    game.load.image('LeftButton', 'Assets/HUD/LeftButton.png');
+    game.load.image('RightButton', 'Assets/HUD/RightButton.png');
+    game.load.image('AttackButton', 'Assets/HUD/AttackButton.png');
+    game.load.image('JumpButton', 'Assets/HUD/JumpButton.png');
+    game.load.image('HealthBar', 'Assets/HUD/HealthBarLine.png');
+    game.load.atlasJSONHash('player', 'Assets/Player/player.png', '../GameCore/Assets/Player/player.json');
+    game.load.atlasJSONHash('enemies', 'Assets/Enemies/enemies.png', '../GameCore/Assets/Enemies/enemies.json');
+    game.load.tilemap('map', 'Assets/Maps/Map1.json', null, Phaser.Tilemap.TILED_JSON);
+    game.load.image('jungle tileset', 'Assets/Maps/jungle tileset.png');
 
     console.log("Assets Loaded.");
 }
