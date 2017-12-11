@@ -28,8 +28,8 @@ function preload() {
     game.load.image('AttackButton', 'Assets/HUD/AttackButton.png');
     game.load.image('JumpButton', 'Assets/HUD/JumpButton.png');
     game.load.image('HealthBar', 'Assets/HUD/HealthBarLine.png');
-    game.load.atlasJSONHash('player', 'Assets/Player/player.png', '../GameCore/Assets/Player/player.json');
-    game.load.atlasJSONHash('enemies', 'Assets/Enemies/enemies.png', '../GameCore/Assets/Enemies/enemies.json');
+    game.load.atlasJSONHash('player', 'Assets/Player/player.png', 'Assets/Player/player.json');
+    game.load.atlasJSONHash('enemies', 'Assets/Enemies/enemies.png', 'Assets/Enemies/enemies.json');
     game.load.tilemap('map', 'Assets/Maps/Map1.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.image('jungle tileset', 'Assets/Maps/jungle tileset.png');
 
