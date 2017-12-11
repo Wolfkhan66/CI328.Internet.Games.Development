@@ -1,8 +1,4 @@
 ﻿
-function testControl(sprite) {
-    console.log("Test Control running...");
-}
-
 function followPlayerControl(sprite) {
     if (sprite.following) {
         // if the player sprite x coordinate is higher than this sprites x coordinate

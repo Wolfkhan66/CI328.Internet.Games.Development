@@ -16,7 +16,6 @@
         playerSprite.animations.add('damaged', ['damaged.png'], 5, false);
         playerSprite.health = 100;
         playerSprite.damage = 2;
-
         playerSprite.takingDamage = false;
         playerSprite.attacking = false;
         playerSprite.attackCounter = 0;
@@ -25,7 +24,6 @@
         playerSprite.facingRight = true;
         playerSprite.attackCounterTimer = game.time.create(false);
         playerSprite.visible = false;
-
         playerSprite.leftButton = false;
         playerSprite.rightButton = false;
 
@@ -85,7 +83,6 @@
         }
     }
 
-
     death() {
         sceneManager("GameOver");
     }
@@ -106,7 +103,6 @@
     }
 
     moveLeft() {
-        console.log("Moving Left <--")
         this.sprite.body.velocity.x = -150;
         if (!this.sprite.jumping) {
             this.sprite.animations.play('run');
@@ -127,7 +123,6 @@
     }
 
     attack() {
-        console.log(this.sprite);
         if (!this.sprite.attacking && !this.sprite.takingDamage) {
             this.sprite.attackCounterTimer.stop();
             this.sprite.jumping = false;
@@ -167,7 +162,6 @@
     jump() {
         if (!this.sprite.jumping && !this.sprite.attacking && !this.sprite.takingDamage) {
             this.sprite.jumping = true;
-            console.log("Jump!")
             this.sprite.animations.play('jump');
             this.sprite.animations.currentAnim.onComplete.add(function () { this.sprite.jumping = false; }, this);
             this.sprite.body.velocity.y = -400;
@@ -176,20 +170,5 @@
 
     idle() {
         this.sprite.animations.play('idle');
-    }
-
-    activateHoldButton(button, bool) {
-        if (bool) {
-            switch (button) {
-                case "Left": {
-                    this.moveLeft();
-                    break;
-                }
-                case "Right": {
-                    this.moveRight();
-                    break;
-                }
-            }
-        }
     }
 }

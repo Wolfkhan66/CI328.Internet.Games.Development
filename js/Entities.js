@@ -32,22 +32,6 @@ class CollidableGroup {
         this.group = group;
     }
 
-    createStar(x, y, scaleX, scaleY) {
-        // get the first sprite in the group that is not in use
-        const star = this.group.getFirstExists(false);
-        if (star) {
-            // reset the x and y of the sprite and set the scale
-            star.reset(x, y);
-            star.scale.setTo(scaleX, scaleY);
-            star.anchor.setTo(0.5, 0.5);
-            //give the sprite some gravity and a random bounce value
-            star.body.gravity.y = 300;
-            star.body.bounce.y = 0.7 + Math.random() * 0.2;
-            star.following = true;
-            star.speed = 50;
-        }
-    }
-
     createEnemy(x, y, scaleX, scaleY) {
         console.log("Creating enemy");
         // get the first sprite in the group that is not in use

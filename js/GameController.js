@@ -14,6 +14,10 @@
     game.currentWave = 0;
     game.enemiesAlive = 0;
     game.waveActive = false;
+
+    game.cameraMovingLeft = false;
+    game.cameraMovingRight = false;
+    game.cameraLastX = 0;
 }
 
 function preload() {
@@ -22,6 +26,11 @@ function preload() {
     game.load.spritesheet('enemy', 'Assets/Enemies/baddie.png', 32, 32);
     game.load.image('SplashScreen', 'Assets/Screens/SplashScreen.png');
     game.load.image('star', 'Assets/Collectibles/star.png');
+    game.load.image('Paralex1', 'Assets/Backgrounds/Paralex1.png');
+    game.load.image('Paralex2', 'Assets/Backgrounds/Paralex2.png');
+    game.load.image('Paralex3', 'Assets/Backgrounds/Paralex3.png');
+    game.load.image('Paralex4', 'Assets/Backgrounds/Paralex4.png');
+    game.load.image('Paralex5', 'Assets/Backgrounds/Paralex5.png');
     game.load.image('HUD', 'Assets/HUD/HUD.png');
     game.load.image('LeftButton', 'Assets/HUD/LeftButton.png');
     game.load.image('RightButton', 'Assets/HUD/RightButton.png');
@@ -58,6 +67,21 @@ function update() {
     handleCollisions();
     gameWorld.update();
     waveManager();
+
+    // Keep track of the cameras movements to allow paralex scrolling of the in game backgrounds
+    if (game.cameraLastX > game.camera.x) {
+        game.cameraMovingLeft = true;
+        game.cameraMovingRight = false;
+        game.cameraLastX = game.camera.x;
+    } else if (game.cameraLastX < game.camera.x) {
+        game.cameraMovingLeft = false;
+        game.cameraMovingRight = true;
+        game.cameraLastX = game.camera.x;
+    }
+    else if (game.cameraLastX == game.camera.x) {
+        game.cameraMovingLeft = false;
+        game.cameraMovingRight = false;
+    }
 }
 
 function resetGame() {
@@ -149,9 +173,7 @@ function handleCollisions() {
     // These collisions make the sprites collide with one another so they may not overlap
     game.physics.arcade.collide(gameWorld.player.sprite, gameWorld.layer);
     game.physics.arcade.collide(gameWorld.enemies.group, gameWorld.layer);
-
     // These collisions detect if sprites have overlapped and passes those sprites to a method to further handle the outcome
-    game.physics.arcade.overlap(gameWorld.player.sprite, gameWorld.stars.group, collectStar);
     game.physics.arcade.overlap(gameWorld.player.sprite, gameWorld.enemies.group, enemyPlayerCollision);
 }
 
