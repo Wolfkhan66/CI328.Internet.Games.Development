@@ -1,71 +1,92 @@
 ﻿class UI {
     constructor() {
         console.log("Constructing UI Elements")
-        this.TextObjects = [];
-        this.Sprites = [];
+        this.textObjects = [];
+        this.sprites = [];
 
         // InGameUI \\
-        this.createSprite('HealthBar', 'InGameUI', 24, 10, 100, 11, 'HealthBar');
-        this.createSprite('HUD', 'InGameUI', 0, 0, 800, 600, 'HUD');
+        this.createSprite('HealthBar', 'InGameUI', 24, 10, 100, 11, 'HealthBar', null, null);
+        this.createSprite('HUD', 'InGameUI', 0, 0, 800, 600, 'HUD', null, null);
+        this.createSprite('LeftButton', 'InGameUI', 10, 540, 50, 50, 'LeftButton', function () { gameWorld.player.sprite.leftButton = true; }, function () { gameWorld.player.sprite.leftButton = false; });
+        this.createSprite('RightButton', 'InGameUI', 60, 540, 50, 50, 'RightButton', function () { gameWorld.player.sprite.rightButton = true; }, function () { gameWorld.player.sprite.rightButton = false; });
+        this.createSprite('JumpButton', 'InGameUI', 740, 490, 50, 50, 'JumpButton', function () { gameWorld.player.jump() }, null);
+        this.createSprite('AttackButton', 'InGameUI', 740, 540, 50, 50, 'AttackButton', function () { gameWorld.player.attack() }, null);
         this.createText('WaveCounter', 'InGameUI', 335, 8, 'Wave: 0', 35, null);
         this.createText('EnemyCounter', 'InGameUI', 355, 50, 'Enemies: ', 20, null);
         this.createText('WaveHelperText', 'InGameUI', 270, (game.height / 2) - 100, 'Prepare Yourself!', 40, null);
         this.createText('Score', 'InGameUI', 660, 2, 'Score: 0', 20, null);
-        
+
         // MainMenuUI \\
-        this.createSprite('SplashScreen', 'MainMenuUI', 0, 0, 800, 600, 'SplashScreen');
-        this.createText('StartGameText', 'MainMenuUI', (game.width / 2) - 34, (game.height / 2) - 34, 'Click to Start', 25, function () { return SceneManager("DifficultySelect") });
+        this.createSprite('SplashScreen', 'MainMenuUI', 0, 0, 800, 600, 'SplashScreen', null, null);
+        this.createText('NewGameText', 'MainMenuUI', (game.width / 2) - 34, (game.height / 2), 'New Game', 25, function () { sceneManager("DifficultySelect") });
+        this.createText('SplashText', 'MainMenuUI', (game.width / 5), (game.height / 6), 'InExile', 150, function () { sceneManager("DifficultySelect") });
 
         // DifficultySelectUI \\
-        this.createText('Easy', 'DifficultySelectUI', (game.width / 2), (game.height / 2), 'Easy', 25, function () { game.difficultyLevel = 1; return SceneManager("MapSelect"); });
-        this.createText('Normal', 'DifficultySelectUI', (game.width / 2), (game.height / 2) + 30, 'Normal', 25, function () { game.difficultyLevel = 2; return SceneManager("MapSelect"); });
-        this.createText('Hard', 'DifficultySelectUI', (game.width / 2), (game.height / 2) + 60, 'Hard', 25, function () { game.difficultyLevel = 3; return SceneManager("MapSelect"); });
-        this.createText('BackFromDifficultySelect', 'DifficultySelectUI', (game.width / 2), (game.height / 2) + 120, 'Back', 25, function () { game.difficultyLevel = 3; return SceneManager("MainMenu"); });
+        this.createSprite('SplashScreen', 'DifficultySelectUI', 0, 0, 800, 600, 'SplashScreen', null, null);
+        this.createText('Easy', 'DifficultySelectUI', (game.width / 2) - 34, (game.height / 2), 'Easy', 25, function () { game.difficultyLevel = 1; sceneManager("MapSelect"); });
+        this.createText('Normal', 'DifficultySelectUI', (game.width / 2) - 34, (game.height / 2) + 30, 'Normal', 25, function () { game.difficultyLevel = 2; sceneManager("MapSelect"); });
+        this.createText('Hard', 'DifficultySelectUI', (game.width / 2) - 34, (game.height / 2) + 60, 'Hard', 25, function () { game.difficultyLevel = 3; sceneManager("MapSelect"); });
+        this.createText('BackFromDifficultySelect', 'DifficultySelectUI', (game.width / 2) - 34, (game.height / 2) + 120, 'Back', 25, function () { sceneManager("Menu"); });
 
         // MapSelectUI \\
-        this.createText('Map1', 'MapSelectUI', (game.width / 2), (game.height / 2), 'Map 1', 25, function () { return SceneManager("Map1") });
-        this.createText('Map2', 'MapSelectUI', (game.width / 2), (game.height / 2) + 30, 'Map 2', 25, function () { return SceneManager("Map2") });
-        this.createText('BackFromMapSelect', 'MapSelectUI', (game.width / 2), (game.height / 2) + 90, 'Back', 25, function () { return SceneManager("DifficultySelect") });
+        this.createSprite('SplashScreen', 'MapSelectUI', 0, 0, 800, 600, 'SplashScreen', null, null);
+        this.createText('Map1', 'MapSelectUI', (game.width / 2) - 34, (game.height / 2), 'Map 1', 25, function () { sceneManager("Map1") });
+        this.createText('Map2', 'MapSelectUI', (game.width / 2) - 34, (game.height / 2) + 30, 'Map 2', 25, function () { sceneManager("Map2") });
+        this.createText('BackFromMapSelect', 'MapSelectUI', (game.width / 2) - 34, (game.height / 2) + 90, 'Back', 25, function () { sceneManager("DifficultySelect") });
 
         // GameOverUI \\
-        this.createText('GameOver', 'GameOverUI', (game.width / 3.5), (game.height / 2) - 68, 'Game Over', 25, function () { return SceneManager("Menu") });
+        this.createSprite('SplashScreen', 'GameOverUI', 0, 0, 800, 600, 'SplashScreen', null, null);
+        this.createText('GameOver', 'GameOverUI', (game.width / 5), (game.height / 4), 'Game Over', 100, null);
+        this.createText('TryAgain?', 'GameOverUI', (game.width / 2) - 44, (game.height / 2), 'Try Again?', 25, function () { sceneManager("DifficultySelect") });
     }
 
     createText(Name, UI, x, y, string, size, event) {
-        var Text = game.add.text(x, y, string, {
+        var textObject = game.add.text(0, 0, string, {
             font: size + 'px Old English Text MT',
             fill: '#fff'
         });
         if (event != null) {
-            Text.inputEnabled = true;
-            Text.events.onInputDown.add(event, this);
+            textObject.inputEnabled = true;
+            textObject.events.onInputDown.add(event, this);
         }
-        this.TextObjects.push({ Name: Name, UI: UI, Text: Text });
+        textObject.fixedToCamera = true;
+        textObject.cameraOffset.setTo(x, y);
+        this.textObjects.push({ Name: Name, UI: UI, Text: textObject });
     }
 
-    createSprite(Name, UI, x, y, width, height, image) {
-        var Sprite = game.add.sprite(x, y, image);
-        Sprite.width = width;
-        Sprite.height = height;
-        this.Sprites.push({ Name: Name, UI: UI, Sprite: Sprite });
+    createSprite(Name, UI, x, y, width, height, image, eventDown, eventUp) {
+        var sprite = game.add.sprite(0, 0, image);
+        sprite.width = width;
+        sprite.height = height;
+        if (eventDown != null) {
+            sprite.inputEnabled = true;
+            sprite.events.onInputDown.add(eventDown, this);
+        }
+        if (eventUp != null) {
+            sprite.inputEnabled = true;
+            sprite.events.onInputUp.add(eventUp, this);
+        }
+        sprite.fixedToCamera = true;
+        sprite.cameraOffset.setTo(x, y);
+        this.sprites.push({ Name: Name, UI: UI, Sprite: sprite });
     }
 
     showUI(UIType) {
-        this.TextObjects.forEach(function (object) { if (object.UI == UIType) object.Text.visible = true; });
-        this.Sprites.forEach(function (object) { if (object.UI == UIType) object.Sprite.visible = true; });
+        this.textObjects.forEach(function (object) { if (object.UI == UIType) object.Text.visible = true; });
+        this.sprites.forEach(function (object) { if (object.UI == UIType) object.Sprite.visible = true; });
     }
 
     hideAll() {
-        this.Sprites.forEach(object => object.Sprite.visible = false);
-        this.TextObjects.forEach(object => object.Text.visible = false);
+        this.sprites.forEach(object => object.Sprite.visible = false);
+        this.textObjects.forEach(object => object.Text.visible = false);
     }
 
     setText(name, value) {
-        this.TextObjects.forEach(function (object) { if (object.Name == name) object.Text.text = value });
+        this.textObjects.forEach(function (object) { if (object.Name == name) object.Text.text = value });
     }
 
     setPlayerHealth(health) {
-        this.Sprites.forEach(function (object) { if (object.Name == "HealthBar") object.Sprite.width = health });
+        this.sprites.forEach(function (object) { if (object.Name == "HealthBar") object.Sprite.width = health });
     }
 
 }

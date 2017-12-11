@@ -32,18 +32,6 @@ class CollidableGroup {
         this.group = group;
     }
 
-    createPlatform(x, y, scaleX, scaleY) {
-        // get the first sprite in the group that is not in use
-        const platform = this.group.getFirstExists(false);
-        if (platform) {
-            // reset the x and y of the sprite and set the scale
-            platform.reset(x, y);
-            platform.scale.setTo(scaleX, scaleY);
-            // make the sprite body immovable to ensure the player collides properly with them.
-            platform.body.immovable = true;
-        }
-    }
-
     createStar(x, y, scaleX, scaleY) {
         // get the first sprite in the group that is not in use
         const star = this.group.getFirstExists(false);
@@ -70,11 +58,13 @@ class CollidableGroup {
             enemy.scale.setTo(scaleX, scaleY);
             enemy.body.gravity.y = 500;
             enemy.anchor.setTo(0.5, 0.5);
-            enemy.animations.add('right', [2, 3], 10, true);
-            enemy.animations.add('left', [0, 1], 10, true);
+            enemy.animations.add('attack', ['Test/attack1.png', 'Test/attack2.png'], 6, false);
+            enemy.animations.add('run', ['Test/running1.png', 'Test/running2.png', 'Test/running3.png', 'Test/running4.png'], 7, true);
+            enemy.animations.add('idle', ['Test/idle.png', 'Test/idle.png'], 2, true);
+            enemy.animations.add('damaged', ['Test/damaged.png', 'Test/damaged.png'], 2, false);
             enemy.body.bounce.y = 0.3;
             enemy.timer = game.time.create(false);
-            enemy.health = 10;
+            enemy.health = 100;
             enemy.range = game.rnd.integerInRange(20, 80);
             enemy.speed = game.rnd.integerInRange(30, 100);
             enemy.damage = game.rnd.integerInRange(4, 6);
@@ -86,6 +76,7 @@ class CollidableGroup {
             enemy.inRange = false;
             enemy.chargingAttack = false;
             enemy.following = true;
+            enemy.takingDamage = false;
         }
     }
 
