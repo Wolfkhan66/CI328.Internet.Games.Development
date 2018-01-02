@@ -32,35 +32,153 @@ class CollidableGroup {
         this.group = group;
     }
 
-    createEnemy(x, y, scaleX, scaleY) {
+    createPotion(x, y, velocityY) {
+        const potion = this.group.getFirstExists(false);
+        if (potion) {
+            potion.body.collideWorldBounds = true;
+            potion.reset(x, y);
+            potion.body.velocity.y = velocityY;
+            potion.body.gravity.y = 500;
+            potion.body.bounce.y = 0.5;
+            potion.timer = game.time.create(false);
+            potion.alive = false;
+        }
+    }
+
+    createArrow(x, y, velocityX) {
+        const arrow = this.group.getFirstExists(false);
+        if (arrow) {
+            arrow.reset(x, y);
+            arrow.body.velocity.x = velocityX;
+            arrow.body.gravity.y = 200;
+            arrow.body.bounce.y = 0.5;
+            arrow.damage = game.rnd.integerInRange(5, 10);
+        }
+    }
+
+    createEnemy(x, y, Type) {
         console.log("Creating enemy");
         // get the first sprite in the group that is not in use
         const enemy = this.group.getFirstExists(false);
         if (enemy) {
+            enemy.type = Type;
             enemy.body.collideWorldBounds = true;
             enemy.reset(x, y);
-            enemy.scale.setTo(scaleX, scaleY);
             enemy.body.gravity.y = 500;
             enemy.anchor.setTo(0.5, 0.5);
-            enemy.animations.add('attack', ['Test/attack1.png', 'Test/attack2.png'], 6, false);
-            enemy.animations.add('run', ['Test/running1.png', 'Test/running2.png', 'Test/running3.png', 'Test/running4.png'], 7, true);
-            enemy.animations.add('idle', ['Test/idle.png', 'Test/idle.png'], 2, true);
-            enemy.animations.add('damaged', ['Test/damaged.png', 'Test/damaged.png'], 2, false);
             enemy.body.bounce.y = 0.3;
             enemy.timer = game.time.create(false);
-            enemy.health = 100;
-            enemy.range = game.rnd.integerInRange(20, 80);
-            enemy.speed = game.rnd.integerInRange(30, 100);
-            enemy.damage = game.rnd.integerInRange(4, 6);
-            enemy.reactionTime = (game.rnd.integerInRange(7, 10) / 10);
             enemy.facingLeft = false;
             enemy.facingRight = false;
             enemy.attacking = false;
             enemy.cooldown = false;
             enemy.inRange = false;
+            enemy.inYRange = false;
             enemy.chargingAttack = false;
             enemy.following = true;
             enemy.takingDamage = false;
+            enemy.playingSound = false;
+            enemy.playerYTimer = game.time.create(false);
+            this.setAnimations(enemy, Type);
+            this.setStats(enemy, Type);
+        }
+    }
+
+    setAnimations(enemy, Type) {
+        switch (Type) {
+            case "Warrior": {
+                enemy.animations.add('attack', ['attack1.png', 'attack2.png'], 6, false);
+                enemy.animations.add('move', ['moving1.png', 'moving2.png'], 7, true);
+                enemy.animations.add('idle', ['idle.png', 'idle.png'], 2, true);
+                enemy.animations.add('damaged', ['damaged1.png', 'damaged2.png'], 2, false);
+                break;
+            }
+            case "Archer": {
+                enemy.animations.add('attack', ['attack1.png', 'attack2.png'], 6, false);
+                enemy.animations.add('move', ['moving1.png', 'moving2.png'], 7, true);
+                enemy.animations.add('idle', ['idle.png', 'idle.png'], 2, true);
+                enemy.animations.add('damaged', ['damaged1.png', 'damaged2.png'], 2, false);
+                break;
+            }
+            case "Mage": {
+                enemy.animations.add('attack', ['attack1.png', 'attack2.png'], 6, false);
+                enemy.animations.add('move', ['moving1.png', 'moving2.png'], 7, true);
+                enemy.animations.add('idle', ['idle.png', 'idle.png'], 2, true);
+                enemy.animations.add('damaged', ['damaged.png', 'idle.png'], 2, false);
+                break;
+            }
+            case "Mystic": {
+                enemy.animations.add('attack', ['attack1.png', 'attack2.png'], 6, false);
+                enemy.animations.add('move', ['moving1.png', 'moving2.png'], 7, true);
+                enemy.animations.add('idle', ['idle.png', 'idle.png'], 2, true);
+                enemy.animations.add('damaged', ['damaged.png', 'idle.png'], 2, false);
+                break;
+            }
+            case "Critter1": {
+                enemy.animations.add('move', ['Critter1/moving1.png', 'Critter1/moving2.png'], 7, true);
+                enemy.animations.add('attack', ['Critter1/moving2.png', 'Critter1/moving2.png'], 6, false);
+                enemy.animations.add('damaged', ['Critter1/damaged.png', 'Critter1/moving1.png'], 2, false);
+                break;
+            }
+            case "Critter2": {
+                enemy.animations.add('move', ['Critter2/moving1.png', 'Critter2/moving2.png'], 7, true);
+                enemy.animations.add('attack', ['Critter2/moving2.png', 'Critter2/moving2.png'], 6, false);
+                enemy.animations.add('damaged', ['Critter2/damaged.png', 'Critter2/moving1.png'], 2, false);
+                break;
+            }
+        }
+    }
+
+    setStats(enemy, Type) {
+        switch (Type) {
+            case "Warrior": {
+                enemy.health = 50 * game.difficultyLevel;
+                enemy.range = game.rnd.integerInRange(60, 80);
+                enemy.speed = game.rnd.integerInRange(200, 280);
+                enemy.damage = game.rnd.integerInRange(5, 10) * game.difficultyLevel;
+                enemy.reactionTime = (game.rnd.integerInRange(7, 10) / 10);
+                break;
+            }
+            case "Archer": {
+                enemy.health = 25 * game.difficultyLevel;
+                enemy.range = game.rnd.integerInRange(300, 350);
+                enemy.speed = game.rnd.integerInRange(200, 280);
+                enemy.damage = game.rnd.integerInRange(2, 4) * game.difficultyLevel;
+                enemy.reactionTime = (game.rnd.integerInRange(7, 10) / 10);
+                break;
+            }
+            case "Mage": {
+                enemy.health = 15 * game.difficultyLevel;
+                enemy.range = game.rnd.integerInRange(250, 300);
+                enemy.speed = game.rnd.integerInRange(200, 280);
+                enemy.damage = game.rnd.integerInRange(4, 6) * game.difficultyLevel;
+                enemy.reactionTime = (game.rnd.integerInRange(7, 10) / 10);
+                break;
+            }
+            case "Mystic": {
+                enemy.health = 100 * game.difficultyLevel;
+                enemy.range = 100;
+                enemy.speed = game.rnd.integerInRange(200, 280);
+                enemy.damage = game.rnd.integerInRange(4, 6) * game.difficultyLevel;
+                enemy.reactionTime = (game.rnd.integerInRange(7, 10) / 10);
+                break;
+            }
+            case "Critter1": {
+                enemy.health = 20 * game.difficultyLevel;
+                enemy.range = game.rnd.integerInRange(20, 80);
+                enemy.speed = game.rnd.integerInRange(200, 300);
+                enemy.damage = game.rnd.integerInRange(1, 2) * game.difficultyLevel;
+                enemy.reactionTime = (game.rnd.integerInRange(7, 10) / 10);
+                break;
+            }
+            case "Critter2": {
+                enemy.health = 20 * game.difficultyLevel;
+                enemy.range = game.rnd.integerInRange(20, 80);
+                enemy.speed = game.rnd.integerInRange(200, 300);
+                enemy.damage = game.rnd.integerInRange(1, 2) * game.difficultyLevel;
+                enemy.reactionTime = (game.rnd.integerInRange(7, 10) / 10);
+                break;
+            }
         }
     }
 

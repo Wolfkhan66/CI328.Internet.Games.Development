@@ -14,18 +14,17 @@
     game.currentWave = 0;
     game.enemiesAlive = 0;
     game.waveActive = false;
-
+    game.gameMode = "";
     game.cameraMovingLeft = false;
     game.cameraMovingRight = false;
     game.cameraLastX = 0;
+    game.countDown = 60;
 }
 
 function preload() {
     console.log("Loading Assets...");
     // Load game assets
-    game.load.spritesheet('enemy', 'Assets/Enemies/baddie.png', 32, 32);
     game.load.image('SplashScreen', 'Assets/Screens/SplashScreen.png');
-    game.load.image('star', 'Assets/Collectibles/star.png');
     game.load.image('Paralex1', 'Assets/Backgrounds/Paralex1.png');
     game.load.image('Paralex2', 'Assets/Backgrounds/Paralex2.png');
     game.load.image('Paralex3', 'Assets/Backgrounds/Paralex3.png');
@@ -38,10 +37,22 @@ function preload() {
     game.load.image('JumpButton', 'Assets/HUD/JumpButton.png');
     game.load.image('HealthBar', 'Assets/HUD/HealthBarLine.png');
     game.load.atlasJSONHash('player', 'Assets/Player/player.png', 'Assets/Player/player.json');
-    game.load.atlasJSONHash('enemies', 'Assets/Enemies/enemies.png', 'Assets/Enemies/enemies.json');
-    game.load.tilemap('map', 'Assets/Maps/Map1.json', null, Phaser.Tilemap.TILED_JSON);
+    game.load.atlasJSONHash('archer', 'Assets/Enemies/archer.png', 'Assets/Enemies/archer.json');
+    game.load.atlasJSONHash('critters', 'Assets/Enemies/critters.png', 'Assets/Enemies/critters.json');
+    game.load.atlasJSONHash('mage', 'Assets/Enemies/mage.png', 'Assets/Enemies/mage.json');
+    game.load.atlasJSONHash('mystic', 'Assets/Enemies/mystic.png', 'Assets/Enemies/mystic.json');
+    game.load.atlasJSONHash('warrior', 'Assets/Enemies/warriors.png', 'Assets/Enemies/warriors.json');
+    game.load.tilemap('map1', 'Assets/Maps/Map1.json', null, Phaser.Tilemap.TILED_JSON);
+    game.load.tilemap('map2', 'Assets/Maps/Map2.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.image('jungle tileset', 'Assets/Maps/jungle tileset.png');
-
+    game.load.image('healthPotion', 'Assets/Collectibles/health.png');
+    game.load.image('arrow', 'Assets/Projectiles/arrow.png');
+    game.load.audio('BackgroundMusic', 'Assets/Audio/BackgroundMusic.mp3');
+    game.load.audio('MainMenuMusic', 'Assets/Audio/MenuMusic.mp3');
+    game.load.audio('Heal', 'Assets/Audio/Heal.wav');
+    game.load.audio('Arrow', 'Assets/Audio/Arrow.wav');
+    game.load.audio('Laser', 'Assets/Audio/Laser.wav');
+    game.load.audio('MeleeAttack', 'Assets/Audio/MeleeAttack.wav');
     console.log("Assets Loaded.");
 }
 
@@ -49,6 +60,8 @@ function create() {
     console.log("Creating World...");
 
     game.actionTimer = game.time.create(false);
+    game.enemySpawnTimer = game.time.create(false);
+
     // set the bounds of the game world to 1920x1080 so the world is larger than the canvas
     game.world.setBounds(0, 0, 2400, 600);
     //Instantiate The GameWorld and system classes
@@ -66,7 +79,7 @@ function create() {
 function update() {
     handleCollisions();
     gameWorld.update();
-    waveManager();
+    gameManager();
 
     // Keep track of the cameras movements to allow paralex scrolling of the in game backgrounds
     if (game.cameraLastX > game.camera.x) {
@@ -85,12 +98,80 @@ function update() {
 }
 
 function resetGame() {
+    console.log("Reseting game variables");
     gameWorld.player.resetPlayer();
     game.score = 0;
     ui.setText("Score", "Score: " + game.score);
+    ui.setText("WaveCounter", "Wave: 1");
+    ui.setText("WaveHelperText", "Prepare Yourself!");
     game.currentWave = 0;
     game.enemiesAlive = 0;
     game.waveActive = false;
+    game.gameMode = "";
+    game.cameraMovingLeft = false;
+    game.cameraMovingRight = false;
+    game.cameraLastX = 0;
+    game.countDown = 60;
+    audio.stopAllSounds();
+}
+
+function handleCollisions() {
+    // These collisions make the sprites collide with one another so they may not overlap
+    game.physics.arcade.collide(gameWorld.player.sprite, gameWorld.layer);
+    game.physics.arcade.collide(gameWorld.warriors.group, gameWorld.layer);
+    game.physics.arcade.collide(gameWorld.critters.group, gameWorld.layer);
+    game.physics.arcade.collide(gameWorld.mages.group, gameWorld.layer);
+    game.physics.arcade.collide(gameWorld.archers.group, gameWorld.layer);
+    game.physics.arcade.collide(gameWorld.mystics.group, gameWorld.layer);
+    game.physics.arcade.collide(gameWorld.potions.group, gameWorld.layer);
+
+    // These collisions detect if sprites have overlapped and passes those sprites to a method to further handle the outcome
+    game.physics.arcade.overlap(gameWorld.player.sprite, gameWorld.warriors.group, enemyPlayerCollision);
+    game.physics.arcade.overlap(gameWorld.player.sprite, gameWorld.critters.group, enemyPlayerCollision);
+    game.physics.arcade.overlap(gameWorld.player.sprite, gameWorld.mages.group, enemyPlayerCollision);
+    game.physics.arcade.overlap(gameWorld.player.sprite, gameWorld.archers.group, enemyPlayerCollision);
+    game.physics.arcade.overlap(gameWorld.player.sprite, gameWorld.mystics.group, enemyPlayerCollision);
+    game.physics.arcade.overlap(gameWorld.player.sprite, gameWorld.potions.group, potionCollision);
+    game.physics.arcade.overlap(gameWorld.player.sprite, gameWorld.projectiles.group, projectileCollision);
+}
+
+function projectileCollision(player, projectile) {
+    gameWorld.player.takeDamage(projectile.damage);
+    projectile.kill();
+}
+
+
+function potionCollision(player, potion) {
+    if (player.health < 100) {
+        potion.kill();
+        player.health += 10;
+        if (player.health > 100) { player.health = 100; }
+        ui.setPlayerHealth(player.health);
+        audio.playSound("Heal");
+    }
+}
+
+function enemyPlayerCollision(player, enemy) {
+    if (enemy.attacking) {
+        gameWorld.player.takeDamage(enemy.damage);
+        if (enemy.facingLeft) {
+            player.body.velocity.x = -100;
+        }
+        if (enemy.facingRight) {
+            player.body.velocity.x = 100;
+        }
+    }
+
+    if (player.attacking) {
+        enemy.health -= player.damage;
+        enemy.takingDamage = true;
+        if (player.facingLeft) {
+            enemy.body.velocity.x = -100;
+        }
+        if (player.facingRight) {
+            enemy.body.velocity.x = 100;
+        }
+    }
 }
 
 function sceneManager(scene) {
@@ -100,6 +181,7 @@ function sceneManager(scene) {
     switch (scene) {
         case "Menu": {
             resetGame();
+            audio.playSound("MainMenuMusic");
             ui.showUI("MainMenuUI");
             break;
         }
@@ -111,55 +193,77 @@ function sceneManager(scene) {
             ui.showUI("DifficultySelectUI");
             break;
         }
+        case "ModeSelect": {
+            ui.showUI("ModeSelectUI");
+            break;
+        }
         case "GameOver": {
-            resetGame();
             ui.showUI("GameOverUI");
             break;
         }
         case "Map1": {
-            resetGame();
+            audio.stopSound("MainMenuMusic");
+            audio.playSound("BackgroundMusic");
             ui.showUI("InGameUI");
             gameWorld.player.sprite.visible = true;
-            gameWorld.player.setPlayerPosition(game.width / 2, game.height / 2);
-            gameWorld.createMap1();
-            game.currentMap = "Map1";
+            gameWorld.player.setPlayerPosition(1200, game.height / 2);
+            gameWorld.createMap("map1");
             break;
         }
         case "Map2": {
-            resetGame();
+            audio.stopSound("MainMenuMusic");
+            audio.playSound("BackgroundMusic");
             ui.showUI("InGameUI");
             gameWorld.player.sprite.visible = true;
-            gameWorld.player.setPlayerPosition(game.width / 2, game.height / 2);
-            game.currentMap = "Map2";
+            gameWorld.player.setPlayerPosition(1200, game.height / 2);
+            gameWorld.createMap("map2");
             break;
         }
     }
 }
 
-function waveManager() {
-    if (game.enemiesAlive == 0 && !game.waveActive) {
-        game.actionTimer.start();
-        if (game.actionTimer.seconds > 7) {
-            ui.setText("WaveHelperText", "Here They Come!");
+function gameManager() {
+    switch (game.gameMode) {
+        case "Classic": {
+            classic();
+            break;
         }
-        if (game.actionTimer.seconds > 12) {
-            game.currentWave++;
-            game.difficulty = (game.currentWave * 5) * game.difficultyLevel;
-            ui.setText("WaveCounter", "Wave: " + game.currentWave);
-            ui.setText("WaveHelperText", " ");
-            game.waveActive = true;
-            game.actionTimer.stop();
+        case "Survival": {
+            survival();
+            break;
+        }
+        case "TimeAttack": {
+            ui.showUI("TimeAttackUI");
+            timeAttack();
+            break;
         }
     }
+}
+
+function waveCooldown() {
+    game.actionTimer.start();
+    if (game.actionTimer.seconds > 7) {
+        ui.setText("WaveHelperText", "Here They Come!");
+    }
+    if (game.actionTimer.seconds > 12) {
+        game.currentWave++;
+        game.difficulty = (game.currentWave * 5) * game.difficultyLevel;
+        ui.setText("WaveCounter", "Wave: " + game.currentWave);
+        ui.setText("WaveHelperText", " ");
+        game.waveActive = true;
+        game.actionTimer.stop();
+    }
+}
+
+function classic() {
+    if (game.enemiesAlive == 0 && !game.waveActive) {
+        waveCooldown();
+    }
     else if (game.waveActive) {
-        ui.setText("EnemyCounter", "Enemies: " + (game.difficulty + game.enemiesAlive));
+        ui.setText("EnemyCounter", "Enemies: " + (game.enemiesAlive));
         if (game.difficulty > 0) {
-            if (game.enemiesAlive < 6) {
-                const x = game.rnd.integerInRange(20, 780);
-                const y = game.rnd.integerInRange(20, 500);
-                gameWorld.enemies.createEnemy(x, y, 1, 1);
-                game.enemiesAlive++;
-                game.difficulty--;
+            if (game.enemiesAlive < 10) {
+                gameWorld.createEnemy();
             }
         }
         else if (game.enemiesAlive == 0) {
@@ -169,39 +273,32 @@ function waveManager() {
     }
 }
 
-function handleCollisions() {
-    // These collisions make the sprites collide with one another so they may not overlap
-    game.physics.arcade.collide(gameWorld.player.sprite, gameWorld.layer);
-    game.physics.arcade.collide(gameWorld.enemies.group, gameWorld.layer);
-    // These collisions detect if sprites have overlapped and passes those sprites to a method to further handle the outcome
-    game.physics.arcade.overlap(gameWorld.player.sprite, gameWorld.enemies.group, enemyPlayerCollision);
-}
-
-function collectStar(player, star) {
-    star.kill();
-    game.score += 10;
-    ui.setText("Score", "Score: " + game.score);
-}
-
-function enemyPlayerCollision(player, enemy) {
-    if (enemy.attacking) {
-        gameWorld.player.takeDamage(enemy.damage);
-        if (enemy.facingLeft) {
-            player.body.velocity.x = -200;
-        }
-        if (enemy.facingRight) {
-            player.body.velocity.x = 200;
+function survival() {
+    ui.setText("EnemyCounter", "");
+    if (game.enemiesAlive == 0 && !game.waveActive) {
+        waveCooldown();
+    }
+    else if (game.waveActive) {
+        if (game.enemiesAlive < 10) {
+            gameWorld.createEnemy();
         }
     }
+}
 
-    if (player.attacking) {
-        enemy.health -= player.damage;
-        enemy.takingDamage = true;
-        if (player.facingLeft) {
-            enemy.body.velocity.x = -200;
+function timeAttack() {
+    ui.setText("EnemyCounter", "");
+    if (game.enemiesAlive == 0 && !game.waveActive) {
+        ui.setText("Timer", Math.floor(game.countDown));
+        waveCooldown();
+    }
+    else if (game.waveActive) {
+        game.countDown = game.countDown - (1 / 60);
+        ui.setText("Timer", Math.floor(game.countDown));
+        if (game.enemiesAlive < 10) {
+            gameWorld.createEnemy();
         }
-        if (player.facingRight) {
-            enemy.body.velocity.x = 200;
-        }
+    }
+    if (game.countDown <= 0) {
+        gameWorld.player.death();
     }
 }

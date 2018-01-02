@@ -1,0 +1,60 @@
+{"frames": {
+
+"Critter1/damaged.png":
+{
+	"frame": {"x":0,"y":0,"w":24,"h":26},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":24,"h":26},
+	"sourceSize": {"w":24,"h":26}
+},
+"Critter1/moving1.png":
+{
+	"frame": {"x":24,"y":0,"w":24,"h":26},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":24,"h":26},
+	"sourceSize": {"w":24,"h":26}
+},
+"Critter1/moving2.png":
+{
+	"frame": {"x":48,"y":0,"w":28,"h":26},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":28,"h":26},
+	"sourceSize": {"w":28,"h":26}
+},
+"Critter2/damaged.png":
+{
+	"frame": {"x":76,"y":0,"w":24,"h":26},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":24,"h":26},
+	"sourceSize": {"w":24,"h":26}
+},
+"Critter2/moving1.png":
+{
+	"frame": {"x":100,"y":0,"w":24,"h":27},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":24,"h":27},
+	"sourceSize": {"w":24,"h":27}
+},
+"Critter2/moving2.png":
+{
+	"frame": {"x":124,"y":0,"w":28,"h":26},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":28,"h":26},
+	"sourceSize": {"w":28,"h":26}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "critters.png",
+	"format": "RGBA8888",
+	"size": {"w":152,"h":27},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:3180e52ac8c60d5e5b328fdcfe73af68:b71a74b9c68f11b66aa74591887b3e34:8648cc3d001f653b1ce36339d5244c61$"
+}
+}
