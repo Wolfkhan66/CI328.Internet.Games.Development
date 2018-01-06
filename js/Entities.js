@@ -56,12 +56,11 @@ class CollidableGroup {
         }
     }
 
-    createEnemy(x, y, Type) {
+    createEnemy(x, y, type) {
         console.log("Creating enemy");
-        // get the first sprite in the group that is not in use
         const enemy = this.group.getFirstExists(false);
         if (enemy) {
-            enemy.type = Type;
+            enemy.type = type;
             enemy.body.collideWorldBounds = true;
             enemy.reset(x, y);
             enemy.body.gravity.y = 500;
@@ -79,13 +78,13 @@ class CollidableGroup {
             enemy.takingDamage = false;
             enemy.playingSound = false;
             enemy.playerYTimer = game.time.create(false);
-            this.setAnimations(enemy, Type);
-            this.setStats(enemy, Type);
+            this.setAnimations(enemy, type);
+            this.setStats(enemy, type);
         }
     }
 
-    setAnimations(enemy, Type) {
-        switch (Type) {
+    setAnimations(enemy, type) {
+        switch (type) {
             case "Warrior": {
                 enemy.animations.add('attack', ['attack1.png', 'attack2.png'], 6, false);
                 enemy.animations.add('move', ['moving1.png', 'moving2.png'], 7, true);
@@ -129,8 +128,8 @@ class CollidableGroup {
         }
     }
 
-    setStats(enemy, Type) {
-        switch (Type) {
+    setStats(enemy, type) {
+        switch (type) {
             case "Warrior": {
                 enemy.health = 50 * game.difficultyLevel;
                 enemy.range = game.rnd.integerInRange(60, 80);

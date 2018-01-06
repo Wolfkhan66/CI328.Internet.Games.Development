@@ -32,7 +32,7 @@ function followPlayerYControl(sprite) {
     if (!sprite.inYRange) {
         if (gameWorld.player.sprite.y > sprite.y) {
             sprite.body.velocity.y = sprite.speed;
-            if (gameWorld.player.sprite.y - 10 < sprite.y) {
+            if (gameWorld.player.sprite.y - 50 < sprite.y) {
                 sprite.inYRange = true;
             } else { sprite.inYRange = false; }
         }
@@ -43,12 +43,12 @@ function followPlayerYControl(sprite) {
     if (sprite.inYRange) {
         sprite.body.velocity.y = 0;
         if (gameWorld.player.sprite.y < sprite.y) {
-            if (gameWorld.player.sprite.y - 10 < sprite.y) {
+            if (gameWorld.player.sprite.y - 50 < sprite.y) {
                 sprite.inYRange = false;
             }
         }
         else {
-            if (gameWorld.player.sprite.y + 10 > sprite.y) {
+            if (gameWorld.player.sprite.y + 50 > sprite.y) {
                 sprite.inYRange = false;
             }
         }
@@ -84,7 +84,7 @@ function attackControl(sprite) {
 
         if (!sprite.soundPlaying) {
             sprite.soundPlaying = true;
-            if (sprite.type == "Mystic") {
+            if (sprite.type == "mystic") {
                 audio.playSound("Lazer");
             }
             else {

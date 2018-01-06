@@ -23,19 +23,16 @@
 
 function preload() {
     console.log("Loading Assets...");
-    // Load game assets
+    // Load game assets \\
     game.load.image('SplashScreen', 'Assets/Screens/SplashScreen.png');
-    game.load.image('Paralex1', 'Assets/Backgrounds/Paralex1.png');
-    game.load.image('Paralex2', 'Assets/Backgrounds/Paralex2.png');
-    game.load.image('Paralex3', 'Assets/Backgrounds/Paralex3.png');
-    game.load.image('Paralex4', 'Assets/Backgrounds/Paralex4.png');
-    game.load.image('Paralex5', 'Assets/Backgrounds/Paralex5.png');
     game.load.image('HUD', 'Assets/HUD/HUD.png');
     game.load.image('LeftButton', 'Assets/HUD/LeftButton.png');
     game.load.image('RightButton', 'Assets/HUD/RightButton.png');
     game.load.image('AttackButton', 'Assets/HUD/AttackButton.png');
     game.load.image('JumpButton', 'Assets/HUD/JumpButton.png');
     game.load.image('HealthBar', 'Assets/HUD/HealthBarLine.png');
+    game.load.image('healthPotion', 'Assets/Collectibles/health.png');
+    game.load.image('arrow', 'Assets/Projectiles/arrow.png');
     game.load.atlasJSONHash('player', 'Assets/Player/player.png', 'Assets/Player/player.json');
     game.load.atlasJSONHash('archer', 'Assets/Enemies/archer.png', 'Assets/Enemies/archer.json');
     game.load.atlasJSONHash('critters', 'Assets/Enemies/critters.png', 'Assets/Enemies/critters.json');
@@ -44,26 +41,43 @@ function preload() {
     game.load.atlasJSONHash('warrior', 'Assets/Enemies/warriors.png', 'Assets/Enemies/warriors.json');
     game.load.tilemap('map1', 'Assets/Maps/Map1.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.tilemap('map2', 'Assets/Maps/Map2.json', null, Phaser.Tilemap.TILED_JSON);
+
+    // 3rd party assets \\
+    //Jungle Asset Pack by Jesse M - https://jesse-m.itch.io/jungle-pack
+    game.load.image('Paralex1', 'Assets/Backgrounds/Paralex1.png');
+    game.load.image('Paralex2', 'Assets/Backgrounds/Paralex2.png');
+    game.load.image('Paralex3', 'Assets/Backgrounds/Paralex3.png');
+    game.load.image('Paralex4', 'Assets/Backgrounds/Paralex4.png');
+    game.load.image('Paralex5', 'Assets/Backgrounds/Paralex5.png');
     game.load.image('jungle tileset', 'Assets/Maps/jungle tileset.png');
-    game.load.image('healthPotion', 'Assets/Collectibles/health.png');
-    game.load.image('arrow', 'Assets/Projectiles/arrow.png');
+
+    // B-3 by BoxCat Games - http://freemusicarchive.org/music/BoxCat_Games/Nameless_the_Hackers_RPG_Soundtrack/BoxCat_Games_-_Nameless-_the_Hackers_RPG_Soundtrack_-_04_B-3
     game.load.audio('BackgroundMusic', 'Assets/Audio/BackgroundMusic.mp3');
+    // Mt Fox Shop by BoxCat Games - http://freemusicarchive.org/music/BoxCat_Games/Nameless_the_Hackers_RPG_Soundtrack/BoxCat_Games_-_Nameless-_the_Hackers_RPG_Soundtrack_-_02_Mt_Fox_Shop
     game.load.audio('MainMenuMusic', 'Assets/Audio/MenuMusic.mp3');
+    // Retro game heal sound by lulyc - https://freesound.org/people/lulyc/sounds/346116/
     game.load.audio('Heal', 'Assets/Audio/Heal.wav');
+    // Arrow by EverHeat - https://freesound.org/people/EverHeat/sounds/205563/
     game.load.audio('Arrow', 'Assets/Audio/Arrow.wav');
+    // Laser Wrath 4 by marcuslee - https://freesound.org/people/marcuslee/sounds/42106/
     game.load.audio('Laser', 'Assets/Audio/Laser.wav');
+    // knife slash 3 by beerbelly38 - https://freesound.org/people/beerbelly38/sounds/362348/
     game.load.audio('MeleeAttack', 'Assets/Audio/MeleeAttack.wav');
+
     console.log("Assets Loaded.");
 }
+
 
 function create() {
     console.log("Creating World...");
 
+    // create some game timers that are used to trigger certain events.
     game.actionTimer = game.time.create(false);
     game.enemySpawnTimer = game.time.create(false);
 
     // set the bounds of the game world to 1920x1080 so the world is larger than the canvas
     game.world.setBounds(0, 0, 2400, 600);
+
     //Instantiate The GameWorld and system classes
     gameWorld = new GameWorld();
     ui = new UI();
@@ -72,6 +86,7 @@ function create() {
     // set the built in camera to follow the player sprite and set it to platformer mode
     game.camera.follow(gameWorld.player.sprite, Phaser.Camera.FOLLOW_PLATFORMER);
 
+    // Load the first scene that starts the game, the main menu.
     sceneManager("Menu");
     console.log("Create complete.");
 }
@@ -174,6 +189,7 @@ function enemyPlayerCollision(player, enemy) {
     }
 }
 
+// Handles the overall flow of the game by loading different scenes.
 function sceneManager(scene) {
     ui.hideAll();
     gameWorld.player.sprite.visible = false;
@@ -222,6 +238,7 @@ function sceneManager(scene) {
     }
 }
 
+// Handles which function is called depending on the set game mode to affect gameplay.
 function gameManager() {
     switch (game.gameMode) {
         case "Classic": {
@@ -240,6 +257,7 @@ function gameManager() {
     }
 }
 
+// Creates a delay at the beginning of each Wave or game mode and provides helper text to give visual feedback.
 function waveCooldown() {
     game.actionTimer.start();
     if (game.actionTimer.seconds > 7) {
@@ -255,6 +273,8 @@ function waveCooldown() {
     }
 }
 
+// Called when the classic game mode is activated. Spawns enemies as waves as long as difficulty is higher than 0. 
+// If all enemies in the wave are killed then the wave is deactivated and the WaveCooldown() function is called to activate the next wave.
 function classic() {
     if (game.enemiesAlive == 0 && !game.waveActive) {
         waveCooldown();
@@ -273,6 +293,7 @@ function classic() {
     }
 }
 
+// Called when the survival mode is activated. Spawns enemies repeatedly if there are less than 10 alive at once.
 function survival() {
     ui.setText("EnemyCounter", "");
     if (game.enemiesAlive == 0 && !game.waveActive) {
@@ -285,6 +306,8 @@ function survival() {
     }
 }
 
+// Called when the time attack mode is actived. After the inital wave cooldown it starts a countdown timer and repeatedly spawns enemies if there are less than 10.
+// If the countdown reaches 0 then the player.death() function is called.
 function timeAttack() {
     ui.setText("EnemyCounter", "");
     if (game.enemiesAlive == 0 && !game.waveActive) {

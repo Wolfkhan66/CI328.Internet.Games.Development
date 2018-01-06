@@ -11,16 +11,16 @@
         this.createSound("MeleeAttack", 1, false);
     }
 
-    createSound(Name, Volume, Loop) {
-        this.sounds.push({ Name: Name, SoundEffect: game.add.audio(Name, Volume, Loop) });
+    createSound(name, volume, loop) {
+        this.sounds.push({ Name: name, SoundEffect: game.add.audio(name, volume, loop) });
     }
 
-    playSound(Name) {
-        this.sounds.forEach(function (object) { if (object.Name == Name) { object.SoundEffect.play(); } });
+    playSound(name) {
+        this.sounds.forEach(function (object) { if (object.Name == name) { object.SoundEffect.play(); } });
     }
 
-    stopSound(Name) {
-        this.sounds.forEach(function (object) { if (object.Name == Name) { object.SoundEffect.stop(); } });
+    stopSound(name) {
+        this.sounds.forEach(function (object) { if (object.Name == name) { object.SoundEffect.stop(); } });
     }
 
     stopAllSounds() {
@@ -81,7 +81,7 @@ class UI {
         this.createText('Continue?', 'GameOverUI', (game.width / 2) - 44, (game.height / 2) + 40, 'Continue?', 25, function () { sceneManager("Menu") });
     }
 
-    createText(Name, UI, x, y, string, size, event) {
+    createText(name, UI, x, y, string, size, event) {
         var textObject = game.add.text(0, 0, string, {
             font: size + 'px Old English Text MT',
             fill: '#fff'
@@ -92,10 +92,10 @@ class UI {
         }
         textObject.fixedToCamera = true;
         textObject.cameraOffset.setTo(x, y);
-        this.textObjects.push({ Name: Name, UI: UI, Text: textObject });
+        this.textObjects.push({ Name: name, UI: UI, Text: textObject });
     }
 
-    createSprite(Name, UI, x, y, width, height, image, eventDown, eventUp) {
+    createSprite(name, UI, x, y, width, height, image, eventDown, eventUp) {
         var sprite = game.add.sprite(0, 0, image);
         sprite.width = width;
         sprite.height = height;
@@ -109,7 +109,7 @@ class UI {
         }
         sprite.fixedToCamera = true;
         sprite.cameraOffset.setTo(x, y);
-        this.sprites.push({ Name: Name, UI: UI, Sprite: sprite });
+        this.sprites.push({ Name: name, UI: UI, Sprite: sprite });
     }
 
     showUI(UIType) {
